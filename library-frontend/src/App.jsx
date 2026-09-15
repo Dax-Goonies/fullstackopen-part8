@@ -3,6 +3,7 @@ import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
 
+// App Component
 const App = () => {
   const [page, setPage] = useState('authors')
 
