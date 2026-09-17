@@ -13,6 +13,10 @@ const Books = (props) => {
     return <div>...loading books</div>
   }
 
+  if (result.error) {
+    return <div>error loading books: {result.error.message}</div>
+  }
+
   return (
     <div>
       <h2>books</h2>
@@ -23,11 +27,11 @@ const Books = (props) => {
             <th>author</th>
             <th>published</th>
           </tr>
-          {result.data.allBooks.map((a) => (
-            <tr key={a.title}>
-              <td>{a.title}</td>
-              <td>{a.author}</td>
-              <td>{a.published}</td>
+          {result.data.allBooks.map((b) => (
+            <tr key={b.title}>
+              <td>{b.title}</td>
+              <td>{b.author.name}</td>
+              <td>{b.published}</td>
             </tr>
           ))}
         </tbody>
