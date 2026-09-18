@@ -1,9 +1,12 @@
 const { GraphQLError } = require('graphql')
+const { PubSub } = require('graphql-subscriptions')
 const jwt = require('jsonwebtoken')
 
 const Author = require('./models/author')
 const Book = require('./models/book')
 const User = require('./models/user')
+
+const pubsub = new PubSub()
 
 // Backend resolvers
 const resolvers = {
@@ -45,9 +48,7 @@ const resolvers = {
       const currentUser = context.currentUser
       if (!currentUser) {
         throw new GraphQLError('Not authenticated', {
-          extensions: {
-            code: 'BAD_USER_INPUT',
-          }
+          extensions: { code: 'BAD_USER_INPUT' }
         })
       }
 
@@ -80,7 +81,10 @@ const resolvers = {
           }
         })
       }
-      return book.populate('author')
+
+      const savedBook = await book.populate('author')
+      pubsub.publish('BOOK_ADDED', { bookAdded: savedBook })
+      return savedBook
     },
     // Edit author birth year, if author does not exist return null
     editAuthor: async (root, args, context) => {
@@ -158,6 +162,11 @@ const resolvers = {
       await Book.deleteMany({})
       await User.deleteMany({})
       return true
+    },
+  },
+  Subscription: {
+    bookAdded: {
+      subscribe: () => pubsub.asyncIterableIterator('BOOK_ADDED'),
     },
   },
 }

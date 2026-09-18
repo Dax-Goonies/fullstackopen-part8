@@ -76,3 +76,15 @@ export const ME = gql `
     }
   }
 `
+
+// Subscription for adding book
+export const BOOK_ADDED = gql`
+  subscription {
+    bookAdded {
+      title
+      author { name }
+      published
+      genres
+    }
+  }
+`

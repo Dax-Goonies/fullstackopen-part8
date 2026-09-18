@@ -31,7 +31,7 @@ const Books = (props) => {
   return (
     <div>
       <h2>books</h2>
-      {genres && <p>in genre <strong>{genre}</strong></p>}
+      {genre && <p>in genre <strong>{genre}</strong></p>}
       <table>
         <tbody>
           <tr>
