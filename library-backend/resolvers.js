@@ -5,6 +5,7 @@ const Author = require('./models/author')
 const Book = require('./models/book')
 const User = require('./models/user')
 
+// Backend resolvers
 const resolvers = {
   Query: {
     bookCount: async () => Book.collection.countDocuments(),
@@ -135,7 +136,7 @@ const resolvers = {
       const user = await User.findOne({ username: args.username})
 
       if (!user || args.password !== 'secret') {
-        throw new GraphQLError('wrong credential', {
+        throw new GraphQLError('login failed: wrong credentials', {
           extensions: {
             code: 'BAD_USER_INPUT',
           }

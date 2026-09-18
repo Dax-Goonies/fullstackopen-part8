@@ -28,7 +28,11 @@ const EditAuthor = () => {
       <h3>Set birthyear</h3>
       <form onSubmit={submit}>
         <div>
-        <select value={name} onChange={({ target }) => setName(target.value)}>
+        <select 
+          name="name"
+          value={name} 
+          onChange={({ target }) => setName(target.value)}
+        >
           <option value="">select author</option>
           {data?.allAuthors.map(a => (
             <option key={a.name} value={a.name}>

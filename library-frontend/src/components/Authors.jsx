@@ -3,15 +3,15 @@ import { ALL_AUTHORS } from '../queries'
 import EditAuthor from './EditAuthor'
 
 // Authors component: List of authors
-const Authors = (props) => {
+const Authors = ({ show, loggedIn}) => {
   const result = useQuery(ALL_AUTHORS)
   
-  if (!props.show) {
+  if (!show) {
     return null
   }
 
   if (result.loading) {
-    return <div>...loading authors</div>
+    return <div>loading authors...</div>
   }
   
   return (
@@ -33,7 +33,7 @@ const Authors = (props) => {
           ))}
         </tbody>
       </table>
-      <EditAuthor />
+      {loggedIn && <EditAuthor />}
     </div>
   )
 }
