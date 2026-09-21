@@ -27,7 +27,7 @@ const App = () => {
       console.log(data)
       const addedBook = data.data.bookAdded
       addBookToCache(client.cache, addedBook)
-      notify(`${addedBook.title} added`)
+      notify('a new book was added')
     }
   })
 

@@ -42,10 +42,10 @@ const resolvers = {
         counts.map((c) => [c._id.toString(), c.count])
       )
 
-      return authors.map((author) => ({
-        ...author.toObject(),
-        bookCount: countMap[author._id.toString()] || 0
-      }))
+      return authors.map((author) => {
+        author.bookCount = countMap[author._id.toString()] || 0
+        return author
+      })
 
     },
     me: async (root, args, context) => {
