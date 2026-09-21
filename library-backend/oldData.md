@@ -1,3 +1,7 @@
+## Data for manual testing
+
+### Authors
+
 let authors = [
   {
     name: "Robert Martin",
@@ -23,6 +27,8 @@ let authors = [
     id: "afa5b6f3-344d-11e9-a414-719c6709cf3e",
   },
 ]
+
+### Books
 
 let books = [
   {

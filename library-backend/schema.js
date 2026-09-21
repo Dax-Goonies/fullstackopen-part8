@@ -1,3 +1,4 @@
+// GraphQL schema for the library app
 const typeDefs = /* GraphQL */`
   type User {
     username: String!

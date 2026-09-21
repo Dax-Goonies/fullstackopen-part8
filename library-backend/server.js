@@ -22,9 +22,11 @@ const getUserFromAuthHeader = async (auth) => {
 
   try {
     const decodedToken = jwt.verify(auth.substring(7), process.env.JWT_SECRET)
+    // Unused friend variable commented for now
     // return User.findById(decodedToken.id).populate('friends')
     return await User.findById(decodedToken.id)
   } catch (error) {
+    console.log('Token verification failed:', error.message)
     return null
   }
 }

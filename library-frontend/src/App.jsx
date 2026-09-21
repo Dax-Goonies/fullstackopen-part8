@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useApolloClient, useQuery, useSubscription } from '@apollo/client/react'
+import { useApolloClient, useSubscription } from '@apollo/client/react'
 import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'

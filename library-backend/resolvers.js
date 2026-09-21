@@ -8,14 +8,15 @@ const User = require('./models/user')
 
 const pubsub = new PubSub()
 
-// Backend resolvers
+// GraphQL resolvers for the library app
 const resolvers = {
+  // Query & Mutation fileds correpond directly to schema.js
   Query: {
     bookCount: async () => Book.collection.countDocuments(),
     authorCount: async () => Author.collection.countDocuments(),
     allBooks: async (root, args) => {
       let filter = {}
-      // Check for author parameter in query
+      // Check: Author parameter in query
       if (args.author) {
         const author = await Author.findOne({ name: args.author })
         if (!author) {
@@ -23,28 +24,39 @@ const resolvers = {
         }
         filter.author = author._id
       }
-      // Check for genre parameter in query
+      // Check: Genre parameter in query
       if (args.genre) {
         filter.genres = args.genre
       }
       return Book.find(filter).populate('author')
     },
-    allAuthors: async () => Author.find({}),
+    // Uses aggregation to solve N+1 problem for bookCount
+    allAuthors: async () => {
+      console.log('Query1: fetching all authors')
+      const authors = await Author.find({})
+      console.log('Query 2: aggrating book counts')
+      const counts = await Book.aggregate([
+        { $group: { _id: '$author', count: { $sum: 1 } } }
+      ])
+      const countMap = Object.fromEntries(
+        counts.map((c) => [c._id.toString(), c.count])
+      )
+
+      return authors.map((author) => ({
+        ...author.toObject(),
+        bookCount: countMap[author._id.toString()] || 0
+      }))
+
+    },
     me: async (root, args, context) => {
       return context.currentUser
     }
   },
 
-  Author: {
-    bookCount: async (root) => {
-      return Book.countDocuments({ author: root._id })
-    }
-  },
-
   Mutation: {
-    // Add a new book
+    // Add book: Dynamically add and redirect to 'books' page
     addBook: async (root, args, context) => {
-      // Check if user is connected
+      // Check: If user is connected
       const currentUser = context.currentUser
       if (!currentUser) {
         throw new GraphQLError('Not authenticated', {
@@ -53,7 +65,7 @@ const resolvers = {
       }
 
       let author = await Author.findOne({ name: args.author })
-      // Check if author exists, if not add it
+      // Check: If author exists, if not add it
       if (!author) {
         author = new Author({ name: args.author })
         try {
@@ -68,7 +80,7 @@ const resolvers = {
           })
         }
       }
-      // Save the new book
+
       const book = new Book({ ...args, author: author._id })
       try {
         await book.save()
@@ -88,7 +100,7 @@ const resolvers = {
     },
     // Edit author birth year, if author does not exist return null
     editAuthor: async (root, args, context) => {
-      // Check if user is connected
+      // Check: If user is connected
       const currentUser = context.currentUser
       if (!currentUser) {
         throw new GraphQLError('Not authenticated', {
@@ -99,7 +111,7 @@ const resolvers = {
       }
 
       const author = await Author.findOne({ name: args.name })
-      // Check if author exists
+      // Check: If author exists
       if (!author) {
         return null
       }
@@ -116,7 +128,7 @@ const resolvers = {
         })
       }
     },
-    // Create new User
+    // Create new User with username and favorite genre
     createUser: async (root, args) => {
       const user = new User({
         username: args.username,
